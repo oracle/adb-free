@@ -30,7 +30,6 @@ podman run -d \
 -e MY_ADB_WALLET_PASSWORD=*** \
 -e MY_ADW_ADMIN_PASSWORD=*** \
 -e MY_ATP_ADMIN_PASSWORD=*** \
---hostname localhost \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
@@ -67,7 +66,6 @@ podman run -d \
 -e MY_ADB_WALLET_PASSWORD=*** \
 -e MY_ADW_ADMIN_PASSWORD=*** \
 -e MY_ATP_ADMIN_PASSWORD=*** \
---hostname localhost \
 -e http_proxy=http://my-corp-proxy.com:80/ \
 -e https_proxy=http://my-corp-proxy.com:80/ \
 -e no_proxy=localhost,127.0.0.1 \
@@ -82,7 +80,7 @@ ghcr.io/oracle/adb-free:latest
 ### Migrating data across containers
 
 #### Mount Volume
-To persist data across container restarts, you should mount a volume at `/u01/data` and follow the steps mentioned in the [documentation to migrate PDB data across containers](https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/autonomous-docker-container.html#GUID-03B5601E-E15B-4ECC-9929-D06ACF576857) 
+To persist data across container restarts and removals, you should mount a volume at `/u01/data` and follow the steps mentioned in the [documentation to migrate PDB data across containers](https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/autonomous-docker-container.html#GUID-03B5601E-E15B-4ECC-9929-D06ACF576857) 
 
 ```bash
 podman run -d \
@@ -93,7 +91,6 @@ podman run -d \
 -e MY_ADB_WALLET_PASSWORD=*** \
 -e MY_ADW_ADMIN_PASSWORD=*** \
 -e MY_ATP_ADMIN_PASSWORD=*** \
---hostname localhost \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
