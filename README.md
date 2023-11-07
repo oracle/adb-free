@@ -27,12 +27,20 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
---hostname localhost \
+-e MY_ADB_WALLET_PASSWORD=*** \
+-e MY_ADW_ADMIN_PASSWORD=*** \
+-e MY_ATP_ADMIN_PASSWORD=*** \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
---name adb_container \
+--name adb-free \
 ghcr.io/oracle/adb-free:latest
 ```
+On first startup of the container:
+
+- User mandatorily has to change the admin passwords. Please specify them using the environment variables `MY_ADW_ADMIN_PASSWORD` and `MY_ATP_ADMIN_PASSWORD`
+
+- Wallet is generated using the wallet password `MY_ADB_WALLET_PASSWORD`
+
 
 #### Note:
 - For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
@@ -55,7 +63,9 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
---hostname localhost \
+-e MY_ADB_WALLET_PASSWORD=*** \
+-e MY_ADW_ADMIN_PASSWORD=*** \
+-e MY_ATP_ADMIN_PASSWORD=*** \
 -e http_proxy=http://my-corp-proxy.com:80/ \
 -e https_proxy=http://my-corp-proxy.com:80/ \
 -e no_proxy=localhost,127.0.0.1 \
@@ -64,53 +74,32 @@ podman run -d \
 -e NO_PROXY=localhost,127.0.0.1 \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
---name adb_container \
+--name adb-free \
+ghcr.io/oracle/adb-free:latest
+```
+### Migrating data across containers
+
+#### Mount Volume
+To persist data across container restarts and removals, you should mount a volume at `/u01/data` and follow the steps mentioned in the [documentation to migrate PDB data across containers](https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/autonomous-docker-container.html#GUID-03B5601E-E15B-4ECC-9929-D06ACF576857) 
+
+```bash
+podman run -d \
+-p 1521:1522 \
+-p 1522:1522 \
+-p 8443:8443 \
+-p 27017:27017 \
+-e MY_ADB_WALLET_PASSWORD=*** \
+-e MY_ADW_ADMIN_PASSWORD=*** \
+-e MY_ATP_ADMIN_PASSWORD=*** \
+--cap-add SYS_ADMIN \
+--device /dev/fuse \
+--name adb-free \
+--volume adb_container_volume:/u01/data \
 ghcr.io/oracle/adb-free:latest
 ```
 
 ### Connecting to Oracle Autonomous Database Free container
 
-#### Change expired password
-
-You are forced to change Admin user passwords during first login
-
-| Database      | Expired ADMIN password |
-|--------|------------------------|
-| MY_ATP | Welcome_MY_ATP_1234    |
-| MY_ADW | Welcome_MY_ADW_1234    |
-
-
-Use the container utility script /u01/scripts/change_expired_password.sh to change expired password
-
-```bash
-podman exec <container_id> /u01/scripts/change_expired_password.sh <MY_Database> <user> <old_password> <new_password>
-```
-
-Example:
-```bash
-podman exec adb_container /u01/scripts/change_expired_password.sh MY_ATP admin Welcome_MY_ATP_1234 ******
-
-```
-
-```text
-SQL*Plus: Release 19.0.0.0.0 - Production on Thu Aug 17 04:00:02 2023
-Version 19.20.0.1.0
- 
-Copyright (c) 1982, 2023, Oracle.  All rights reserved.
- 
-ERROR:
-ORA-28001: the password has expired
- 
- 
-Changing password for admin
-New password:
-Retype new password:
-Password changed
- 
-Connected to:
-Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
-Version 19.20.0.1.0
-```
 
 #### ORDS/APEX/Database Actions
 
@@ -183,6 +172,40 @@ For TLS use the following
 
 TNS alias mappings to their connect string can be found in` $TNS_ADMIN/tnsnames.ora` file.
 
+#### TLS walletless connection
+
+To connect without a wallet, you need to update your client's truststore with the self-signed certificate generated at container start
+
+##### Linux system truststore
+
+Copy `/u01/app/oracle/wallets/tls_wallet/adb_container.cert` from container and update your system truststore
+
+```bash
+podman cp adb-free:/u01/app/oracle/wallets/tls_wallet/adb_container.cert adb_container.cert
+sudo cp adb_container.cert /etc/pki/ca-trust/source/anchors
+sudo update-ca-trust
+```
+
+##### MacOS system trustsore
+
+For MacOS, please refer the [support guide](https://support.apple.com/guide/keychain-access/add-certificates-to-a-keychain-kyca2431/mac) to add certificate to keychain
+
+##### JDK truststore
+
+For JDK truststore update, you can use `keytool`
+
+Linux example:
+
+```bash
+sudo keytool -import -alias adb_container_certificate -keystore $JAVA_HOME/lib/security/cacerts -file adb_container.cert 
+```
+
+MacOS example:
+```bash
+sudo keytool -import -alias adb_container_certificate -file adb_container.cert -keystore  /Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/lib/security/cacerts
+```
+
+
 #### SQL*Plus
 
 In this example, we connect using the alias `my_atp_low`
@@ -213,7 +236,7 @@ pip install oracledb
 ```python
 import oracledb
 dsn = "admin/<my_adw_admin_password>@my_adw_medium"
-conn = oracledb.connect(dsn=dsn, wallet_location="/scratch/tls_wallet")
+conn = oracledb.connect(dsn=dsn, wallet_location="/scratch/tls_wallet", wallet_password="***")
 cr = conn.cursor()
 r = cr.execute("SELECT 1 FROM DUAL")
 print(r.fetchall())
