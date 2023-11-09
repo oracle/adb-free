@@ -226,22 +226,22 @@ Version 19.20.0.1.0
 SQL> 
 ```
 
-#### Python thin driver
+#### Python
 
-Install thin driver in your Python 3 environment
+Install the python-oracledb driver for Oracle Database
 ```bash
-pip install oracledb
+python3 -m pip install oracledb
 ```
 
 ```python
 import oracledb
-dsn = "admin/<my_adw_admin_password>@my_adw_medium"
-conn = oracledb.connect(dsn=dsn, wallet_location="/scratch/tls_wallet", wallet_password="***")
+conn = oracledb.connect(user="admin", password="<my_adw_admin_password>", dsn="my_adw_medium", config_dir="/scratch/tls_wallet", wallet_location="/scratch/tls_wallet", wallet_password="***")
 cr = conn.cursor()
 r = cr.execute("SELECT 1 FROM DUAL")
 print(r.fetchall())
 
 >> [(1,)]
+
 ```
 
 
