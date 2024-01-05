@@ -1,13 +1,13 @@
 # Oracle Autonomous Database Free Container Image Documentation
 
-Oracle Autonomous Database Free Container image comes with 2 prebuilt Databases - `MY_ATP` and `MY_ADW`. These are similar to Transaction Processing and Data Warehouse workload type databases in Autonomous Database Serverless Cloud service.
+Oracle Autonomous Database Free Container image supports 2 types of database workload types; `ADW` and `ATP`. These are similar to Transaction Processing and Data Warehouse workload type databases in Autonomous Database Serverless Cloud service.
 
 Following key features are supported:
 
 - Oracle Rest Data Services (ORDS)
 - APEX
 - Database Actions
-- Mongo API enabled (by default routed to `MY_ATP`)
+- Mongo API
 
 The storage size is limited to 20 GB for each Database
 
@@ -17,9 +17,26 @@ The storage size is limited to 20 GB for each Database
 
 Oracle Autonomous Database Free container needs 4 CPUs and 8 GiB memory
 
+### Install podman
+
+Please refer the official documentation to install podman on [Linux](https://podman.io/docs/installation#installing-on-linux), [Windows](https://podman.io/docs/installation#windows) or [Mac](https://podman.io/docs/installation#macos)
+
+
+### Start podman machine on MacOS (x86_64) or Windows (x86_64)
+
+Containers need the Linux kernel. Run following commands to start a podman virtual machine
+
+```bash
+podman machine init
+podman machine set --cpus 4 --memory 8192
+podman machine start
+```
+
+Refer the [FAQ](#faq) to configure virtual machine on ARM machine (M1/M2 chips)
+
 ### Starting an ADB Free container
 
-To start an Oracle Autonomous Database Free container run the following command 
+To start an Oracle Autonomous Database Free container for **ATP** workload, run the following command 
 
 ```bash
 podman run -d \
@@ -27,33 +44,44 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e MY_ADB_WALLET_PASSWORD=*** \
--e MY_ADW_ADMIN_PASSWORD=*** \
--e MY_ATP_ADMIN_PASSWORD=*** \
+-e WORKLOAD_TYPE='ATP' \
+-e WALLET_PASSWORD=*** \
+-e ADMIN_PASSWORD=*** \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
 ghcr.io/oracle/adb-free:latest
 ```
-On first startup of the container:
 
-- User mandatorily has to change the admin passwords. Please specify them using the environment variables `MY_ADW_ADMIN_PASSWORD` and `MY_ATP_ADMIN_PASSWORD`
+#### On first startup of the container: 
 
-- Wallet is generated using the wallet password `MY_ADB_WALLET_PASSWORD`
+- User mandatorily has to change the admin passwords. Please specify the password using the environment variable
+`ADMIN_PASSWORD`
+
+- Wallet is generated using the wallet password `WALLET_PASSWORD`
 
 
-#### Note:
-- For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
-- `--hostname` is the Fully Qualified Domain Name (FQDN) of your host.
+Following table explains the environment variables passed to the container
+
+| Environment variable | Description                                                                                                         |
+|----------------------|---------------------------------------------------------------------------------------------------------------------|
+| WORKLOAD_TYPE        | Can be either `ATP` or `ADW`. The Database will be called either `MY_ATP` or `MY_ADW` depending on the passed value |
+| ADMIN_PASSWORD       | Admin user password                                                                                                 |
+| WALLET_PASSWORD      | Wallet password used by Database clients for m-TLS                                                                  |
+
+
+> **_Note_**: For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
+
+#### Ports
 
 Note the following ports which are forwarded to the container process
 
-| Port | Description                                     |
-|------|-------------------------------------------------|
-| 1521 | TLS                                             |
-| 1522 | mTLS                                            |
+| Port | Description                          |
+|------|--------------------------------------|
+| 1521 | TLS                                  |
+| 1522 | mTLS                                 |
 | 8443 | HTTPS port for ORDS / APEX and Database Actions |
-| 27017 | Mongo API ( MY_ATP )                            |
+| 27017 | Mongo API                            |
 
 If you are behind a corporate proxy, pass the proxy environment variables as shown below:
 
@@ -63,9 +91,9 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e MY_ADB_WALLET_PASSWORD=*** \
--e MY_ADW_ADMIN_PASSWORD=*** \
--e MY_ATP_ADMIN_PASSWORD=*** \
+-e WORKLOAD_TYPE='ATP' \
+-e WALLET_PASSWORD=*** \
+-e ADMIN_PASSWORD=*** \
 -e http_proxy=http://my-corp-proxy.com:80/ \
 -e https_proxy=http://my-corp-proxy.com:80/ \
 -e no_proxy=localhost,127.0.0.1 \
@@ -77,6 +105,52 @@ podman run -d \
 --name adb-free \
 ghcr.io/oracle/adb-free:latest
 ```
+
+### adb-cli
+
+`adb-cli` can be used to perform database operations after container is up and running
+
+To use adb-cli, you can define the following alias for convenience
+```bash
+alias adb-cli="podman exec <container_name> adb-cli"
+```
+
+#### Available commands
+
+```bash
+>> adb-cli --help
+
+Usage: adb-cli [OPTIONS] COMMAND [ARGS]...
+
+  ADB-S Command Line Interface (CLI) to perform container-runtime database
+  operations
+
+Options:
+  -v, --version  Show the version and exit.
+  --help         Show this message and exit.
+
+Commands:
+  add-database
+  change-password
+```
+
+#### Add Database
+
+You can add a database using the `add-database` command
+
+```bash
+adb-cli add-database --workload-type "ADW" --admin-password "Welcome_1234"
+```
+
+#### Change Password
+
+To change password for Admin user, use the following command
+
+```bash
+adb-cli change-password --database-name "MY_ADW" --old-password "Welcome_1234" --new-password "Welcome_12345"
+```
+
+
 ### Migrating data across containers
 
 #### Mount Volume
@@ -88,9 +162,9 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e MY_ADB_WALLET_PASSWORD=*** \
--e MY_ADW_ADMIN_PASSWORD=*** \
--e MY_ATP_ADMIN_PASSWORD=*** \
+-e WORKLOAD_TYPE='ATP' \
+-e WALLET_PASSWORD=*** \
+-e ADMIN_PASSWORD=*** \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
@@ -98,22 +172,19 @@ podman run -d \
 ghcr.io/oracle/adb-free:latest
 ```
 
-### Connecting to Oracle Autonomous Database Free container
 
+### Connecting to Oracle Autonomous Database Free container
 
 #### ORDS/APEX/Database Actions
 
-During container initialization `--hostname` argument is used to generate self-signed SSL certs to serve HTTPS traffic on port 8443.
+Container hostname is used to generate self-signed SSL certs to serve HTTPS traffic on port 8443. APEX and Database Actions can be accessed using the container host (or simply localhost)
 
-For example, if you run the ADB free container on a host whose FQDN is `my.host.com` you can pass `--hostname my.host.com`
+| Application      | URL                                                                           |
+|------------------|------------------------------------------------------------------------------|
+| APEX             | https://localhost:8443/ords/apex                           |
+| Database Actions | https://localhost:8443/ords/sql-developer  |
 
-APEX and Database Actions can be accessed using the passed hostname (or simply localhost)
-
-
-| Application      | MY_ATP                                          | MY_ADW                                                              | Example                                            |
-|------------------|-------------------------------------------------|---------------------------------------------------------------------|----------------------------------------------------|
-| APEX             | https://localhost:8443/ords/my_atp/             | https://localhost:8443/ords/my_adw/                                 | https://my.host.com:8443/ords/my_atp               |
-| Database Actions | https://localhost:8443/ords/my_atp/sql-developer | https://localhost:8443/ords/my_adw/sql-developer | https://my.host.com:8443/ords/my_adw/sql-developer |
+> **_Note:_**  For additional databases plugged in using `adb-cli add-database` command, please use the URL formats `https://localhost:8443/ords/{database_name}/apex` and `https://localhost:8443/ords/{database_name}/sql-developer` to access APEX and Database Actions respectively.
 
 #### Wallet Setup
 
@@ -122,7 +193,7 @@ In the container, TLS wallet is generated at location `/u01/app/oracle/wallets/t
 Copy wallet to your host. 
 
 ```bash
-podman cp adb_container:/u01/app/oracle/wallets/tls_wallet /scratch/tls_wallet
+podman cp adb-free:/u01/app/oracle/wallets/tls_wallet /scratch/tls_wallet
 ```
 In this example, wallet is copied to `/scratch/tls_wallet` folder
 
@@ -204,6 +275,7 @@ MacOS example:
 ```bash
 sudo keytool -import -alias adb_container_certificate -file adb_container.cert -keystore  /Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/lib/security/cacerts
 ```
+
 
 
 #### SQL*Plus
@@ -304,3 +376,4 @@ podman machine init
 podman machine set --cpus 4 --memory 8192
 podman machine start
 ```
+
