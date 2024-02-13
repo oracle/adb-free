@@ -36,7 +36,7 @@ Refer the [FAQ](#faq) to configure virtual machine on ARM machine (M1/M2 chips)
 
 ### Starting an ADB Free container
 
-To start an Oracle Autonomous Database Free container for **ATP** workload, run the following command 
+To start an Oracle Autonomous Database Free container for **ATP** workload, run the following command
 
 ```bash
 podman run -d \
@@ -53,7 +53,7 @@ podman run -d \
 ghcr.io/oracle/adb-free:latest
 ```
 
-#### On first startup of the container: 
+#### On first startup of the container:
 
 - User mandatorily has to change the admin passwords. Please specify the password using the environment variable
 `ADMIN_PASSWORD`
@@ -65,7 +65,7 @@ Following table explains the environment variables passed to the container
 
 | Environment variable | Description                                                                                                         |
 |----------------------|---------------------------------------------------------------------------------------------------------------------|
-| WORKLOAD_TYPE        | Can be either `ATP` or `ADW`. The Database will be called either `MY_ATP` or `MY_ADW` depending on the passed value |
+| WORKLOAD_TYPE        | Can be either `ATP` or `ADW`. Default value is `ATP`. The Database will be called either `MY_ATP` or `MY_ADW` depending on the passed value |
 | ADMIN_PASSWORD       | Admin user password                                                                                                 |
 | WALLET_PASSWORD      | Wallet password used by Database clients for m-TLS                                                                  |
 
@@ -154,7 +154,7 @@ adb-cli change-password --database-name "MY_ADW" --old-password "Welcome_1234" -
 ### Migrating data across containers
 
 #### Mount Volume
-To persist data across container restarts and removals, you should mount a volume at `/u01/data` and follow the steps mentioned in the [documentation to migrate PDB data across containers](https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/autonomous-docker-container.html#GUID-03B5601E-E15B-4ECC-9929-D06ACF576857) 
+To persist data across container restarts and removals, you should mount a volume at `/u01/data` and follow the steps mentioned in the [documentation to migrate PDB data across containers](https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/autonomous-docker-container.html#GUID-03B5601E-E15B-4ECC-9929-D06ACF576857)
 
 ```bash
 podman run -d \
@@ -190,7 +190,7 @@ Container hostname is used to generate self-signed SSL certs to serve HTTPS traf
 
 In the container, TLS wallet is generated at location `/u01/app/oracle/wallets/tls_wallet`
 
-Copy wallet to your host. 
+Copy wallet to your host.
 
 ```bash
 podman cp adb-free:/u01/app/oracle/wallets/tls_wallet /scratch/tls_wallet
@@ -214,7 +214,7 @@ Similar to Autonomous Database Serverless Cloud service, use any one of the foll
 
 ##### MY_ATP TNS aliases
 
-For mTLS use the following 
+For mTLS use the following
 - my_atp_medium
 - my_atp_high
 - my_atp_low
@@ -231,7 +231,7 @@ For TLS use the following
 
 ##### MY_ADW TNS aliases
 
-For mTLS use the following 
+For mTLS use the following
 - my_adw_medium
 - my_adw_high
 - my_adw_low
@@ -268,7 +268,7 @@ For JDK truststore update, you can use `keytool`
 Linux example:
 
 ```bash
-sudo keytool -import -alias adb_container_certificate -keystore $JAVA_HOME/lib/security/cacerts -file adb_container.cert 
+sudo keytool -import -alias adb_container_certificate -keystore $JAVA_HOME/lib/security/cacerts -file adb_container.cert
 ```
 
 MacOS example:
@@ -295,7 +295,7 @@ Connected to:
 Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
 Version 19.20.0.1.0
 
-SQL> 
+SQL>
 ```
 
 #### Python
@@ -326,14 +326,14 @@ sqlplus admin/<my_atp_admin_password>@my_atp_medium
 Create user as shown below:
 ```sql
 CREATE USER APP_USER IDENTIFIED BY "<my_app_user_password>" QUOTA UNLIMITED ON DATA;
- 
+
 -- ADD ROLES
 GRANT CONNECT TO APP_USER;
 GRANT CONSOLE_DEVELOPER TO APP_USER;
 GRANT DWROLE TO APP_USER;
 GRANT RESOURCE TO APP_USER;  
- 
- 
+
+
 -- ENABLE REST
 BEGIN
     ORDS.ENABLE_SCHEMA(
@@ -346,7 +346,7 @@ BEGIN
     commit;
 END;
 /
- 
+
 -- QUOTA
 ALTER USER APP_USER QUOTA UNLIMITED ON DATA;
 
@@ -366,8 +366,27 @@ brew reinstall qemu
 ```
 
 ### How can I start Colima x86_64 Virtual Machine with minimum memory/cpu requirements ?
+
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues.
+
 ```bash
-colima start --cpu 4 --memory 8 --arch x86_64
+colima start --cpu 4 --memory 10 --arch x86_64
+```
+
+### How can I start Colima x86_64 Virtual Machine using Apple's new virtualization framework - Rosetta ?
+
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
+
+
+```bash
+softwareupdate --install-rosetta
+colima stop
+colima delete
+colima start --cpu 4 --memory 10 --arch x86_64 --vm-type vz --vz-rosetta
+
+# Verify if Colima is using the new profile
+docker context ls
+colima status
 ```
 
 ### How can I start podman VM on x86_64 Mac with minimum memory/cpu requirements ?
@@ -376,4 +395,3 @@ podman machine init
 podman machine set --cpus 4 --memory 8192
 podman machine start
 ```
-
