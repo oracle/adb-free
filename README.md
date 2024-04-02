@@ -368,7 +368,7 @@ brew reinstall qemu
 
 ### How can I start Colima x86_64 Virtual Machine with minimum memory/cpu requirements ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give memory here to the VM to avoid such issues
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
 
 ```bash
 colima start --cpu 4 --memory 10 --arch x86_64
@@ -376,7 +376,7 @@ colima start --cpu 4 --memory 10 --arch x86_64
 
 ### How can I start Colima x86_64 Virtual Machine using Apple's new virtualization framework - Rosetta ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give memory here to the VM to avoid such issues
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
 
 
 ```bash
