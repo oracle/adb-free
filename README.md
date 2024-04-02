@@ -63,11 +63,12 @@ ghcr.io/oracle/adb-free:latest
 
 Following table explains the environment variables passed to the container
 
-| Environment variable | Description                                                                                                         |
-|----------------------|---------------------------------------------------------------------------------------------------------------------|
-| WORKLOAD_TYPE        | Can be either `ATP` or `ADW`. Default value is `ATP`. The Database will be called either `MY_ATP` or `MY_ADW` depending on the passed value |
-| ADMIN_PASSWORD       | Admin user password                                                                                                 |
-| WALLET_PASSWORD      | Wallet password used by Database clients for m-TLS                                                                  |
+| Environment variable | Description                                                                                                                                 |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| WORKLOAD_TYPE       | Can be either `ATP` or `ADW`. Default value is `ATP`                                                                                                                    |
+| DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type |
+| ADMIN_PASSWORD       | Admin user password                                                                                                                         |
+| WALLET_PASSWORD      | Wallet password used by Database clients for m-TLS                                                                                          |
 
 
 > **_Note_**: For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
@@ -147,7 +148,7 @@ adb-cli add-database --workload-type "ADW" --admin-password "Welcome_1234"
 To change password for Admin user, use the following command
 
 ```bash
-adb-cli change-password --database-name "MY_ADW" --old-password "Welcome_1234" --new-password "Welcome_12345"
+adb-cli change-password --database-name "MYADW" --old-password "Welcome_1234" --new-password "Welcome_12345"
 ```
 
 
@@ -212,34 +213,34 @@ sed -i 's/localhost/my.host.com/g' $TNS_ADMIN/tnsnames.ora
 
 Similar to Autonomous Database Serverless Cloud service, use any one of the following aliases to connect to ADB free container.
 
-##### MY_ATP TNS aliases
+##### MYATP TNS aliases
 
 For mTLS use the following
-- my_atp_medium
-- my_atp_high
-- my_atp_low
-- my_atp_tp
-- my_atp_tpurgent
+- myatp_medium
+- myatp_high
+- myatp_low
+- myatp_tp
+- myatp_tpurgent
 
 For TLS use the following
 
-- my_atp_medium_tls
-- my_atp_high_tls
-- my_atp_low_tls
-- my_atp_tp_tls
-- my_atp_tpurgent_tls
+- myatp_medium_tls
+- myatp_high_tls
+- myatp_low_tls
+- myatp_tp_tls
+- myatp_tpurgent_tls
 
-##### MY_ADW TNS aliases
+##### MYADW TNS aliases
 
 For mTLS use the following
-- my_adw_medium
-- my_adw_high
-- my_adw_low
+- myadw_medium
+- myadw_high
+- myadw_low
 
 For TLS use the following
-- my_adw_medium_tls
-- my_adw_high_tls
-- my_adw_low_tls
+- myadw_medium_tls
+- myadw_high_tls
+- myadw_low_tls
 
 TNS alias mappings to their connect string can be found in` $TNS_ADMIN/tnsnames.ora` file.
 
@@ -280,9 +281,9 @@ sudo keytool -import -alias adb_container_certificate -file adb_container.cert -
 
 #### SQL*Plus
 
-In this example, we connect using the alias `my_atp_low`
+In this example, we connect using the alias `myatp_low`
 ```text
-sqlplus admin/<my_atp_admin_password>@my_atp_low
+sqlplus admin/<myatp_admin_password>@myatp_low
 
 SQL*Plus: Release 21.0.0.0.0 - Production on Wed Jul 26 22:38:27 2023
 Version 21.9.0.0.0
@@ -307,7 +308,7 @@ python3 -m pip install oracledb
 
 ```python
 import oracledb
-conn = oracledb.connect(user="admin", password="<my_adw_admin_password>", dsn="my_adw_medium", config_dir="/scratch/tls_wallet", wallet_location="/scratch/tls_wallet", wallet_password="***")
+conn = oracledb.connect(user="admin", password="<myadw_admin_password>", dsn="myadw_medium", config_dir="/scratch/tls_wallet", wallet_location="/scratch/tls_wallet", wallet_password="***")
 cr = conn.cursor()
 r = cr.execute("SELECT 1 FROM DUAL")
 print(r.fetchall())
@@ -321,7 +322,7 @@ print(r.fetchall())
 
 Connect as Admin
 ```bash
-sqlplus admin/<my_atp_admin_password>@my_atp_medium
+sqlplus admin/<myatp_admin_password>@myatp_medium
 ```
 Create user as shown below:
 ```sql
@@ -367,7 +368,7 @@ brew reinstall qemu
 
 ### How can I start Colima x86_64 Virtual Machine with minimum memory/cpu requirements ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues.
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give memory here to the VM to avoid such issues
 
 ```bash
 colima start --cpu 4 --memory 10 --arch x86_64
@@ -375,7 +376,7 @@ colima start --cpu 4 --memory 10 --arch x86_64
 
 ### How can I start Colima x86_64 Virtual Machine using Apple's new virtualization framework - Rosetta ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
+> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give memory here to the VM to avoid such issues
 
 
 ```bash
