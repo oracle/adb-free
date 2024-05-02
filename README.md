@@ -13,6 +13,17 @@ The storage size is limited to 20 GB for each Database
 
 ## Using this image
 
+### Database versions
+
+From the [released images](https://github.com/oracle/adb-free/pkgs/container/adb-free), choose the database version and corresponding image to work with.
+
+We use the following naming convention:
+
+| Database version | Latest image tag | Specific release image tag |
+|------------------|------------------|----------------------------|
+| 23ai | latest-23ai      | 24.4.4.2-23ai              |
+| 19c | latest           | 24.4.4.2                   |
+
 ### Container CPU/memory requirements
 
 Oracle Autonomous Database Free container needs 4 CPUs and 8 GiB memory
@@ -36,6 +47,9 @@ Refer the [FAQ](#faq) to configure virtual machine on ARM machine (M1/M2 chips)
 
 ### Starting an ADB Free container
 
+> Note: Although the instructions use `podman`, the image format is compliant with both Open Container Initiative (OCI) and Docker.
+> ADB container works seamlessly with both OCI and Docker container runtimes. You can also use `docker` to start the container.
+
 To start an Oracle Autonomous Database Free container for **ATP** workload, run the following command
 
 ```bash
@@ -44,14 +58,16 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e WORKLOAD_TYPE='ATP' \
+-e WORKLOAD_TYPE=ATP \
 -e WALLET_PASSWORD=*** \
 -e ADMIN_PASSWORD=*** \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
-ghcr.io/oracle/adb-free:latest
+ghcr.io/oracle/adb-free:latest-23ai
 ```
+
+> Note: Use `ghcr.io/oracle/adb-free:latest` for 19c
 
 #### On first startup of the container:
 
@@ -63,12 +79,12 @@ ghcr.io/oracle/adb-free:latest
 
 Following table explains the environment variables passed to the container
 
-| Environment variable | Description                                                                                                                                 |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| WORKLOAD_TYPE       | Can be either `ATP` or `ADW`. Default value is `ATP`                                                                                                                    |
-| DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type |
-| ADMIN_PASSWORD       | Admin user password                                                                                                                         |
-| WALLET_PASSWORD      | Wallet password used by Database clients for m-TLS                                                                                          |
+| Environment variable | Description                                                                                                                                                                               |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| WORKLOAD_TYPE       | Can be either `ATP` or `ADW`. Default value is `ATP`                                                                                                                                      |
+| DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type                   |
+| ADMIN_PASSWORD       | Admin user password must be between 12 and 30 characters long and must include at least one uppercase letter, one lowercase letter, and one numeric. The password cannot contain username |
+| WALLET_PASSWORD      | Wallet password must have a minimum length of eight characters and contain alphabetic characters combined with numbers or special characters.                                             |
 
 
 > **_Note_**: For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
@@ -92,7 +108,7 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e WORKLOAD_TYPE='ATP' \
+-e WORKLOAD_TYPE=ATP \
 -e WALLET_PASSWORD=*** \
 -e ADMIN_PASSWORD=*** \
 -e http_proxy=http://my-corp-proxy.com:80/ \
@@ -104,7 +120,7 @@ podman run -d \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
-ghcr.io/oracle/adb-free:latest
+ghcr.io/oracle/adb-free:latest-23ai
 ```
 
 ### adb-cli
@@ -163,14 +179,14 @@ podman run -d \
 -p 1522:1522 \
 -p 8443:8443 \
 -p 27017:27017 \
--e WORKLOAD_TYPE='ATP' \
+-e WORKLOAD_TYPE=ATP \
 -e WALLET_PASSWORD=*** \
 -e ADMIN_PASSWORD=*** \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
 --volume adb_container_volume:/u01/data \
-ghcr.io/oracle/adb-free:latest
+ghcr.io/oracle/adb-free:latest-23ai
 ```
 
 
