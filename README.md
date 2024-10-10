@@ -22,7 +22,7 @@ We use the following naming convention:
 | Database version | Latest image tag | Specific release image tag |
 |------------------|------------------|----------------------------|
 | 23ai | latest-23ai      | 24.4.4.2-23ai              |
-| 19c | latest           | 24.4.4.2                   |
+| 19c | latest           | 24.9.3.2                   |
 
 ### Container CPU/memory requirements
 
@@ -85,6 +85,7 @@ Following table explains the environment variables passed to the container
 | DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type                   |
 | ADMIN_PASSWORD       | Admin user password must be between 12 and 30 characters long and must include at least one uppercase letter, one lowercase letter, and one numeric. The password cannot contain username |
 | WALLET_PASSWORD      | Wallet password must have a minimum length of eight characters and contain alphabetic characters combined with numbers or special characters.                                             |
+| ENABLE_ARCHIVE_LOG   | To enable archive logging in the database. Default value is True                                                                                                                          |
 
 
 > **_Note_**: For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
@@ -100,28 +101,22 @@ Note the following ports which are forwarded to the container process
 | 8443 | HTTPS port for ORDS / APEX and Database Actions |
 | 27017 | Mongo API                            |
 
-If you are behind a corporate proxy, pass the proxy environment variables as shown below:
+#### HTTP proxy
+If you are behind a corporate proxy, there are 2 ways to configure the database
+to use the proxy settings
 
-```bash
-podman run -d \
--p 1521:1522 \
--p 1522:1522 \
--p 8443:8443 \
--p 27017:27017 \
--e WORKLOAD_TYPE=ATP \
--e WALLET_PASSWORD=*** \
--e ADMIN_PASSWORD=*** \
--e http_proxy=http://my-corp-proxy.com:80/ \
--e https_proxy=http://my-corp-proxy.com:80/ \
--e no_proxy=localhost,127.0.0.1 \
--e HTTP_PROXY=http://my-corp-proxy.com:80/  \
--e HTTPS_PROXY=http://my-corp-proxy.com:80/  \
--e NO_PROXY=localhost,127.0.0.1 \
---cap-add SYS_ADMIN \
---device /dev/fuse \
---name adb-free \
-ghcr.io/oracle/adb-free:latest-23ai
+1. Set the `HTTP_PROXY` database property. This is used by packages like `DBMS_CLOUD`
+
+```sql
+exec DBMS_CLOUD_CONTAINER_ADMIN.set_database_property('HTTP_PROXY', 'www-my-corp-proxy.com:80/');
 ```
+
+2. Use `UTL_HTTP.set_proxy` to set proxy for HTTP requests sent using UTL_HTTP
+
+```sql
+exec UTL_HTTP.SET_PROXY('www-my-corp-proxy.com');
+```
+
 
 ### adb-cli
 
@@ -292,6 +287,31 @@ MacOS example:
 ```bash
 sudo keytool -import -alias adb_container_certificate -file adb_container.cert -keystore  /Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/lib/security/cacerts
 ```
+
+#### SQL Developer Desktop application
+
+Copy the wallet from the container and zip it
+
+```bash
+podman cp adb-free:/u01/app/oracle/wallets/tls_wallet /scratch/tls_wallet
+
+zip -j /scratch/tls_wallet.zip /scratch/tls_wallet/*
+
+```
+
+Once you zip the Wallet, open SQLDeveloper and follow the below steps: 
+
+1. Click on File -> New -> Database Connection
+
+2. Enter username / password
+
+3. From "Connection Type" dropdown choose "Cloud Wallet"
+
+4. Under "Configuration file" browse path to your wallet.zip
+
+5. Select Service from the dropdown
+
+6. Click on Connect
 
 
 
