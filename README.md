@@ -85,7 +85,7 @@ Following table explains the environment variables passed to the container
 | DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type                   |
 | ADMIN_PASSWORD       | Admin user password must be between 12 and 30 characters long and must include at least one uppercase letter, one lowercase letter, and one numeric. The password cannot contain username |
 | WALLET_PASSWORD      | Wallet password must have a minimum length of eight characters and contain alphabetic characters combined with numbers or special characters.                                             |
-| ENABLE_ARCHIVE_LOG   | To enable archive logging in the database. Default value is True                                                                                                                          |
+| ENABLE_ARCHIVE_LOG   | To enable archive logging in the database. Default value is True. To turn off archive logging set the value to False                                                                                                                         |
 
 
 > **_Note_**: For OFS mount, container should start with `SYS_ADMIN` capability. Also, virtual device `/dev/fuse` should be accessible
@@ -299,7 +299,7 @@ zip -j /scratch/tls_wallet.zip /scratch/tls_wallet/*
 
 ```
 
-Once you zip the Wallet, open SQLDeveloper and follow the below steps: 
+Once you zip the Wallet, open SQLDeveloper and follow the below steps:
 
 1. Click on File -> New -> Database Connection
 
