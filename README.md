@@ -392,7 +392,7 @@ ALTER USER APP_USER QUOTA UNLIMITED ON DATA;
 
 ### Oracle Estate Explorer (OEE)
 
-(Oracle Estate Explorer (OEE))[https://www.oracle.com/database/cloud-migration/estate-explorer/] is a tool that enables customers to
+[Oracle Estate Explorer](https://www.oracle.com/database/cloud-migration/estate-explorer/) is a tool that enables customers to
 programmatically evaluate groups of Oracle databases for migration readiness to Oracle’s Autonomous Database (ADB). The output from OEE
 provides a high-level estate overview of the tested group of databases, ranks them according to their alignment with ADB pre-requisites and
 delivers a graded relative effort of any remediation required.
