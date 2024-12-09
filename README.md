@@ -401,19 +401,21 @@ The OEE APEX app is installed in the adb-free images and is available to use out
 
 Following steps are required to launch the OEE app:
 
-1. Login as Database admin and set a password for the MPACK_OEE user
+1. Login as Database admin and set a password for the `MPACK_OEE` user
 
 ```sql
 ALTER USER MPACK_OEE IDENTIFIED BY <PASSWORD>
 ```
 
-2. Visit the APEX URL using https:localhost:8443/ords/apex
+2. Visit the APEX URL using https://localhost:8443/ords/apex
 
-3. Login to the MPACK_OEE APEX workspace using the password set in Step 1
+3. Login to the `MPACK_OEE` APEX workspace using the password set in Step 1
 
-4. Change the MPACK_OEE's APEX account password
+4. Change the `MPACK_OEE`'s APEX account password.
 
-5. On the application home page, select Run Application to open the OEE app in a new browser tab.
+4. Once inside APEX homepage, click "App Builder" and you should see Oracle Estate Explorer banner stating OEE is installed
+
+5. On the application home page, click "Run Application" to open the OEE app in a new browser tab.
 
 ## F.A.Q
 
