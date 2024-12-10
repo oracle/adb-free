@@ -411,9 +411,7 @@ ALTER USER MPACK_OEE IDENTIFIED BY <PASSWORD>
 
 3. Login to the `MPACK_OEE` APEX workspace using the password set in Step 1
 
-4. Change the `MPACK_OEE`'s APEX account password.
-
-4. Once inside APEX homepage, click "App Builder" and you should see Oracle Estate Explorer banner stating OEE is installed
+4. Change the MPACK_OEE’s APEX account password. A warning page will be displayed after changing the MPACK_OEE’s APEX account password, please ignore it and click on Application Builder to launch the OEE application.
 
 5. On the application home page, click "Run Application" to open the OEE app in a new browser tab.
 
