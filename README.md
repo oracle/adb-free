@@ -8,6 +8,7 @@ Following key features are supported:
 - APEX
 - Database Actions
 - Mongo API
+- Oracle Estate Explorer (OEE)
 
 The storage size is limited to 20 GB for each Database
 
@@ -21,7 +22,7 @@ We use the following naming convention:
 
 | Database version | Latest image tag | Specific release image tag |
 |------------------|------------------|----------------------------|
-| 23ai | latest-23ai      | 24.4.4.2-23ai              |
+| 23ai | latest-23ai      | 24.11.4.2-23ai              |
 | 19c | latest           | 24.9.3.2                   |
 
 ### Container CPU/memory requirements
@@ -388,6 +389,31 @@ END;
 ALTER USER APP_USER QUOTA UNLIMITED ON DATA;
 
 ```
+
+### Oracle Estate Explorer (OEE)
+
+[Oracle Estate Explorer](https://www.oracle.com/database/cloud-migration/estate-explorer/) is a tool that enables customers to
+programmatically evaluate groups of Oracle databases for migration readiness to Oracle’s Autonomous Database (ADB). The output from OEE
+provides a high-level estate overview of the tested group of databases, ranks them according to their alignment with ADB pre-requisites and
+delivers a graded relative effort of any remediation required.
+
+The OEE APEX app is installed in the adb-free images and is available to use out-of-the-box
+
+Following steps are required to launch the OEE app:
+
+1. Login as Database admin and set a password for the `MPACK_OEE` user
+
+```sql
+ALTER USER MPACK_OEE IDENTIFIED BY <PASSWORD>
+```
+
+2. Visit the APEX URL using https://localhost:8443/ords/apex
+
+3. Login to the `MPACK_OEE` APEX workspace using the password set in Step 1
+
+4. Change the MPACK_OEE’s APEX account password. A warning page will be displayed after changing the MPACK_OEE’s APEX account password, please ignore it and click on Application Builder to launch the OEE application.
+
+5. On the application home page, click "Run Application" to open the OEE app in a new browser tab.
 
 ## F.A.Q
 
