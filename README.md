@@ -23,7 +23,7 @@ We use the following naming convention:
 | Database version | Latest image tag | Specific release image tag |
 |------------------|------------------|----------------------------|
 | 23ai | latest-23ai      | 24.11.4.2-23ai              |
-| 19c | latest           | 24.9.3.2                   |
+| 19c | latest           | 24.12.1.2                   |
 
 ### Container CPU/memory requirements
 
