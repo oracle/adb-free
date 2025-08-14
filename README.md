@@ -20,10 +20,10 @@ From the [released images](https://github.com/oracle/adb-free/pkgs/container/adb
 
 We use the following naming convention:
 
-| Database version | Latest image tag | Specific release image tag |
-|------------------|------------------|----------------------------|
-| 23ai | latest-23ai      | 24.11.4.2-23ai              |
-| 19c | latest           | 24.12.1.2                   |
+| Database version | Latest image tag | Specific release image tag | Supported Arch |
+|------------------|------------------|----------------------------|---------------------|
+| 23ai | latest-23ai      | 25.7.5.2-23ai              |  linux/arm64 and linux/amd64   |
+| 19c | latest           | 25.7.5.2                   |   linux/amd64                   |
 
 ### Container CPU/memory requirements
 
@@ -34,7 +34,7 @@ Oracle Autonomous Database Free container needs 4 CPUs and 8 GiB memory
 Please refer the official documentation to install podman on [Linux](https://podman.io/docs/installation#installing-on-linux), [Windows](https://podman.io/docs/installation#windows) or [Mac](https://podman.io/docs/installation#macos)
 
 
-### Start podman machine on MacOS (x86_64) or Windows (x86_64)
+### Start podman machine on MacOS or Windows
 
 Containers need the Linux kernel. Run following commands to start a podman virtual machine
 
@@ -44,7 +44,10 @@ podman machine set --cpus 4 --memory 8192
 podman machine start
 ```
 
-Refer the [FAQ](#faq) to configure virtual machine on ARM machine (M1/M2 chips)
+> [!NOTE]
+> From release ADBS-25.7.5.2, 23ai images are multi-arch i.e. images are natively built for ARM64 and AMD64 platforms.
+> 19c image is natively built for linux/amd64 platform only. To run a 19c adb-free container on ARM machines you will need colima emulation
+> Read [FAQ](#faq) for instructions on how to setup Colima VMs
 
 ### Starting an ADB Free container
 
@@ -417,8 +420,11 @@ ALTER USER MPACK_OEE IDENTIFIED BY <PASSWORD>
 
 ## F.A.Q
 
-### How can I run Oracle Autonomous Database Free container on ARM64 arch i.e. machines with M1/M2 chips ?
-Use colima + docker to emulate x86_64 arch. Replace podman with docker in all commands. This is only until we have a native ARM 64 image.
+### How can I run 19c Oracle Autonomous Database Free container on ARM64 arch i.e. machines with M1/M2 chips ?
+> [!IMPORTANT]
+> 23ai images are multi-arch and natively built for both linux/arm64 and linux/amd64 CPU architectures
+
+Use colima + docker to emulate x86_64 arch. Replace podman with docker in all commands.
 
 ### How can I install colima and docker on machines with M1/M2 chips ?
 ```bash
@@ -428,17 +434,19 @@ brew install colima
 brew reinstall qemu
 ```
 
-### How can I start Colima x86_64 Virtual Machine with minimum memory/cpu requirements ?
+### How can I start Colima x86_64 Virtual Machine with minimum memory/cpu requirements for 19c ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
+> [!IMPORTANT]
+> Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
 
 ```bash
 colima start --cpu 4 --memory 10 --arch x86_64
 ```
 
-### How can I start Colima x86_64 Virtual Machine using Apple's new virtualization framework - Rosetta ?
+### How can I start Colima x86_64 Virtual Machine using Apple's new virtualization framework - Rosetta for 19c ?
 
-> Note: Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
+> [!IMPORTANT]
+> Running x86_64 arch containers can have issues translating instructions for ARM. We give higher memory to the VM to avoid such issues
 
 
 ```bash
@@ -452,7 +460,7 @@ docker context ls
 colima status
 ```
 
-### How can I start podman VM on x86_64 Mac with minimum memory/cpu requirements ?
+### How can I start podman VM on Mac with minimum memory/cpu requirements ?
 ```bash
 podman machine init
 podman machine set --cpus 4 --memory 8192
@@ -469,7 +477,7 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-Copyright (c) 2024 Oracle and/or its affiliates.
+Copyright (c) 2025 Oracle and/or its affiliates.
 
 Released under the Universal Permissive License v1.0 as shown at
 <https://oss.oracle.com/licenses/upl/>.
