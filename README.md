@@ -26,7 +26,7 @@ We use the following naming convention:
 | 23ai | latest-23ai      | 25.9.3.2-23ai              |  linux/arm64 and linux/amd64   |
 | 19c | latest           | 25.10.2.1                   |   linux/amd64                   |
 
-> ![NOTE]
+> [!NOTE]
 > ADBS-25.9.3.2-23ai was the last 23ai release version. We now publish only 26ai and 19c adb-free images
 
 ### Container CPU/memory requirements
