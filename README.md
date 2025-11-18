@@ -22,8 +22,12 @@ We use the following naming convention:
 
 | Database version | Latest image tag | Specific release image tag | Supported Arch |
 |------------------|------------------|----------------------------|---------------------|
-| 23ai | latest-23ai      | 25.7.5.2-23ai              |  linux/arm64 and linux/amd64   |
-| 19c | latest           | 25.7.5.2                   |   linux/amd64                   |
+| 26ai | latest-26ai | 25.11.2.2-26ai | linux/arm64 and linux/amd64 |
+| 23ai | latest-23ai      | 25.9.3.2-23ai              |  linux/arm64 and linux/amd64   |
+| 19c | latest           | 25.10.2.1                   |   linux/amd64                   |
+
+> [!NOTE]
+> ADBS-25.9.3.2-23ai was the last 23ai release version. We now publish only 26ai and 19c adb-free images
 
 ### Container CPU/memory requirements
 
@@ -45,7 +49,7 @@ podman machine start
 ```
 
 > [!NOTE]
-> From release ADBS-25.7.5.2, 23ai images are multi-arch i.e. images are natively built for ARM64 and AMD64 platforms.
+> 26ai images are multi-arch i.e. images are natively built for ARM64 and AMD64 platforms.
 > 19c image is natively built for linux/amd64 platform only. To run a 19c adb-free container on ARM machines you will need colima emulation
 > Read [FAQ](#faq) for instructions on how to setup Colima VMs
 
@@ -68,7 +72,7 @@ podman run -d \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
-ghcr.io/oracle/adb-free:latest-23ai
+ghcr.io/oracle/adb-free:latest-26ai
 ```
 
 > Note: Use `ghcr.io/oracle/adb-free:latest` for 19c
@@ -185,7 +189,7 @@ podman run -d \
 --device /dev/fuse \
 --name adb-free \
 --volume adb_container_volume:/u01/data \
-ghcr.io/oracle/adb-free:latest-23ai
+ghcr.io/oracle/adb-free:latest-26ai
 ```
 
 
