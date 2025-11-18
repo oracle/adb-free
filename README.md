@@ -22,7 +22,7 @@ We use the following naming convention:
 
 | Database version | Latest image tag | Specific release image tag | Supported Arch |
 |------------------|------------------|----------------------------|---------------------|
-| 26ai | latest-26ai | 25.11.2.2-26ai | linux/arm64 and linux/adm64 |
+| 26ai | latest-26ai | 25.11.2.2-26ai | linux/arm64 and linux/amd64 |
 | 23ai | latest-23ai      | 25.9.3.2-23ai              |  linux/arm64 and linux/amd64   |
 | 19c | latest           | 25.10.2.1                   |   linux/amd64                   |
 
