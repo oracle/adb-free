@@ -27,7 +27,12 @@ We use the following naming convention:
 | 19c | latest           | 25.10.2.1                   |   linux/amd64                   |
 
 > [!NOTE]
-> ADBS-25.9.3.2-23ai was the last 23ai release version. We now publish only 26ai and 19c adb-free images
+> ADBS-25.9.3.2-23ai was the last 23ai release version. We now publish only 26ai and 19c adb-free images.
+
+> [!NOTE]
+> Often, images will have an additional "important feature" tag alongside release version tags. 
+> For e.g. `adb-free:select_ai_agent`
+
 
 ### Container CPU/memory requirements
 
