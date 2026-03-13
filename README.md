@@ -1,6 +1,6 @@
-# Oracle Autonomous Database Free Container Image Documentation
+# Oracle Autonomous AI Database Free Container Image Documentation
 
-Oracle Autonomous Database Free Container image supports 2 types of database workload types; `ADW` and `ATP`. These are similar to Transaction Processing and Data Warehouse workload type databases in Autonomous Database Serverless Cloud service.
+Oracle Autonomous AI Database Free Container image supports 2 types of database workload types; `Lakehouse (ADW)` and `Transaction Processing (ATP)` similar to the Oracle Autonomous AI Database in Cloud.
 
 Following key features are supported:
 
@@ -22,21 +22,21 @@ We use the following naming convention:
 
 | Database version | Latest image tag | Specific release image tag | Supported Arch |
 |------------------|------------------|----------------------------|---------------------|
-| 26ai | latest-26ai | 25.11.2.2-26ai | linux/arm64 and linux/amd64 |
+| 26ai | latest-26ai | 26.2.4.2-26ai | linux/arm64 and linux/amd64 |
 | 23ai | latest-23ai      | 25.9.3.2-23ai              |  linux/arm64 and linux/amd64   |
-| 19c | latest           | 25.10.2.1                   |   linux/amd64                   |
+| 19c | latest           | 26.2.4.2                   |   linux/amd64                   |
 
 > [!NOTE]
 > ADBS-25.9.3.2-23ai was the last 23ai release version. We now publish only 26ai and 19c adb-free images.
 
 > [!NOTE]
-> Often, images will have an additional "important feature" tag alongside release version tags. 
+> Often, images will have an additional "important feature" tag alongside release version tags.
 > For e.g. `adb-free:select_ai_agent`
 
 
 ### Container CPU/memory requirements
 
-Oracle Autonomous Database Free container needs 4 CPUs and 8 GiB memory
+Oracle Autonomous AI Database Free container needs 4 CPUs and 8 GiB memory
 
 ### Install podman
 
@@ -63,7 +63,7 @@ podman machine start
 > Note: Although the instructions use `podman`, the image format is compliant with both Open Container Initiative (OCI) and Docker.
 > ADB container works seamlessly with both OCI and Docker container runtimes. You can also use `docker` to start the container.
 
-To start an Oracle Autonomous Database Free container for **ATP** workload, run the following command
+To start an Oracle Autonomous AI Database Free container for **ATP** workload, run the following command
 
 ```bash
 podman run -d \
@@ -94,7 +94,7 @@ Following table explains the environment variables passed to the container
 
 | Environment variable | Description                                                                                                                                                                               |
 |----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| WORKLOAD_TYPE       | Can be either `ATP` or `ADW`. Default value is `ATP`                                                                                                                                      |
+| WORKLOAD_TYPE       | Can be either `ATP` for transaction processing or `ADW` for Lakehouse. Default value is `ATP`                                                                                                                                      |
 | DATABASE_NAME       | Database name should contain only alphanumeric characters. if not provided, the Database will be called either `MYATP` or `MYADW` depending on the passed workload type                   |
 | ADMIN_PASSWORD       | Admin user password must be between 12 and 30 characters long and must include at least one uppercase letter, one lowercase letter, and one numeric. The password cannot contain username |
 | WALLET_PASSWORD      | Wallet password must have a minimum length of eight characters and contain alphabetic characters combined with numbers or special characters.                                             |
@@ -198,7 +198,7 @@ ghcr.io/oracle/adb-free:latest-26ai
 ```
 
 
-### Connecting to Oracle Autonomous Database Free container
+### Connecting to Oracle Autonomous AI Database Free container
 
 #### ORDS/APEX/Database Actions
 
@@ -235,7 +235,7 @@ sed -i 's/localhost/my.host.com/g' $TNS_ADMIN/tnsnames.ora
 
 #### Available TNS aliases
 
-Similar to Autonomous Database Serverless Cloud service, use any one of the following aliases to connect to ADB free container.
+Similar to Autonomous AI Database in Cloud, use any one of the following aliases to connect to ADB free container.
 
 ##### MYATP TNS aliases
 
@@ -405,7 +405,7 @@ ALTER USER APP_USER QUOTA UNLIMITED ON DATA;
 ### Oracle Estate Explorer (OEE)
 
 [Oracle Estate Explorer](https://www.oracle.com/database/cloud-migration/estate-explorer/) is a tool that enables customers to
-programmatically evaluate groups of Oracle databases for migration readiness to Oracle’s Autonomous Database (ADB). The output from OEE
+programmatically evaluate groups of Oracle databases for migration readiness to Oracle’s Autonomous AI Database. The output from OEE
 provides a high-level estate overview of the tested group of databases, ranks them according to their alignment with ADB pre-requisites and
 delivers a graded relative effort of any remediation required.
 
@@ -429,7 +429,7 @@ ALTER USER MPACK_OEE IDENTIFIED BY <PASSWORD>
 
 ## F.A.Q
 
-### How can I run 19c Oracle Autonomous Database Free container on ARM64 arch i.e. machines with M1/M2 chips ?
+### How can I run 19c Oracle Autonomous AI Database Free container on ARM64 arch i.e. machines with M1/M2 chips ?
 > [!IMPORTANT]
 > 23ai images are multi-arch and natively built for both linux/arm64 and linux/amd64 CPU architectures
 
