@@ -1,6 +1,6 @@
 # Oracle Autonomous AI Database Free Container Image Documentation
 
-Oracle Autonomous AI Database Free Container image supports 2 types of database workload types; `Lakehouse (ADW)` and `Transaction Processing (ATP)` similar to the Oracle Autonomous AI Database in Cloud.
+Oracle Autonomous AI Database Free Container image supports 2 types of database workload types - `Lakehouse` and `Transaction Processing` similar to the Oracle Autonomous AI Database in Cloud.
 
 Following key features are supported:
 
@@ -486,7 +486,7 @@ Please consult the [security guide](./SECURITY.md) for our responsible security 
 
 ## License
 
-Copyright (c) 2025 Oracle and/or its affiliates.
+Copyright (c) 2026 Oracle and/or its affiliates.
 
 Released under the Universal Permissive License v1.0 as shown at
 <https://oss.oracle.com/licenses/upl/>.
