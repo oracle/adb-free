@@ -68,10 +68,10 @@ podman run -d \
 --cap-add SYS_ADMIN \
 --device /dev/fuse \
 --name adb-free \
-ghcr.io/oracle/adb-free:latest-26ai
+container-registry.oracle.com/database/adb-free:latest-26ai
 ```
 
-> Note: Use `ghcr.io/oracle/adb-free:latest` for 19c
+> Note: Use `container-registry.oracle.com/database/adb-free:latest` for 19c
 
 #### On first startup of the container:
 
@@ -185,7 +185,7 @@ podman run -d \
 --device /dev/fuse \
 --name adb-free \
 --volume adb_container_volume:/u01/data \
-ghcr.io/oracle/adb-free:latest-26ai
+container-registry.oracle.com/database/adb-free:latest-26ai
 ```
 
 
