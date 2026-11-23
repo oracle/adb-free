@@ -22,8 +22,8 @@ We use the following naming convention:
 
 | Database version | Latest image tag | Specific release image tag | Supported Arch |
 |------------------|------------------|----------------------------|---------------------|
-| 26ai | latest-26ai | 26.9.4.1-26ai | linux/arm64 and linux/amd64 |
-| 19c | latest           | 26.9.4.2                   |   linux/amd64                   |
+| 26ai | latest-26ai | 26.11.3.1-26ai | linux/arm64 and linux/amd64 |
+| 19c | latest           | 26.11.3.1                   |   linux/amd64                   |
 
 ### Container CPU/memory requirements
 
